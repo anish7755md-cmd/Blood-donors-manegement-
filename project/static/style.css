@@ -1,0 +1,309 @@
+/* Custom Stiles for Blood Donor Management System */
+:root {
+    --primary-red: #D32F2F;
+    --hover-red: #B71C1C;
+    --accent-red: #FFCDD2;
+    --card-bg: #FFFFFF;
+    --body-bg: #F8F9FA;
+    --text-color: #212529;
+    --text-muted: #6C757D;
+    --border-color: #E0E0E0;
+    --dashboard-card-1: linear-gradient(135deg, #FF8A80 0%, #D32F2F 100%);
+    --dashboard-card-2: linear-gradient(135deg, #81C784 0%, #388E3C 100%);
+    --dashboard-card-3: linear-gradient(135deg, #64B5F6 0%, #1976D2 100%);
+    --dashboard-card-4: linear-gradient(135deg, #FFD54F 0%, #F57C00 100%);
+    --shadow-sm: 0 2px 4px rgba(0,0,0,0.05);
+    --shadow-md: 0 4px 6px rgba(0,0,0,0.1);
+    --shadow-lg: 0 10px 15px rgba(0,0,0,0.1);
+}
+
+/* Dark Theme Overrides */
+[data-theme="dark"] {
+    --primary-red: #E53935;
+    --hover-red: #EF5350;
+    --accent-red: #420A0A;
+    --card-bg: #1E1E1E;
+    --body-bg: #121212;
+    --text-color: #F5F5F5;
+    --text-muted: #B0BEC5;
+    --border-color: #37474F;
+    --dashboard-card-1: linear-gradient(135deg, #D32F2F 0%, #5C0606 100%);
+    --dashboard-card-2: linear-gradient(135deg, #388E3C 0%, #1B4D22 100%);
+    --dashboard-card-3: linear-gradient(135deg, #1976D2 0%, #0D3C61 100%);
+    --dashboard-card-4: linear-gradient(135deg, #F57C00 0%, #6E3B00 100%);
+    --shadow-sm: 0 2px 4px rgba(0,0,0,0.3);
+    --shadow-md: 0 4px 6px rgba(0,0,0,0.4);
+    --shadow-lg: 0 10px 15px rgba(0,0,0,0.5);
+}
+
+body {
+    background-color: var(--body-bg);
+    color: var(--text-color);
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    transition: background-color 0.3s ease, color 0.3s ease;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Layout Elements */
+.navbar-brand {
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    color: #FFFFFF !important;
+}
+
+.brand-dot {
+    color: #FFEB3B;
+}
+
+.navbar {
+    box-shadow: var(--shadow-sm);
+    background-color: #D32F2F;
+}
+
+[data-theme="dark"] .navbar {
+    background-color: #1A1A1A;
+    border-bottom: 2px solid var(--primary-red);
+}
+
+/* Custom Cards styling */
+.card {
+    background-color: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    box-shadow: var(--shadow-sm);
+    transition: transform 0.2s ease, box-shadow 0.2s ease, background-color 0.3s ease;
+}
+
+.card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+}
+
+.card-header {
+    background-color: transparent;
+    border-bottom: 1px solid var(--border-color);
+    font-weight: 600;
+}
+
+/* Theme Badge styling */
+.badge-available {
+    background-color: #E8F5E9;
+    color: #2E7D32;
+    border: 1px solid #C8E6C9;
+}
+
+[data-theme="dark"] .badge-available {
+    background-color: #1B5E20;
+    color: #E8F5E9;
+    border: 1px solid #2E7D32;
+}
+
+.badge-unavailable {
+    background-color: #FFEBEE;
+    color: #C62828;
+    border: 1px solid #FFCDD2;
+}
+
+[data-theme="dark"] .badge-unavailable {
+    background-color: #B71C1C;
+    color: #FFEBEE;
+    border: 1px solid #C62828;
+}
+
+/* Red blood droplet background asset loader effect */
+.blood-drop-bg {
+    position: relative;
+    overflow: hidden;
+}
+
+.blood-drop-bg::before {
+    content: "🩸";
+    position: absolute;
+    font-size: 15rem;
+    right: -2rem;
+    bottom: -2rem;
+    opacity: 0.04;
+    pointer-events: none;
+}
+
+/* Stat Cards gradient panels */
+.stat-card-1 { background: var(--dashboard-card-1); color: #FFFFFF; }
+.stat-card-2 { background: var(--dashboard-card-2); color: #FFFFFF; }
+.stat-card-3 { background: var(--dashboard-card-3); color: #FFFFFF; }
+.stat-card-4 { background: var(--dashboard-card-4); color: #FFFFFF; }
+
+.stat-card {
+    border: none;
+    border-radius: 16px;
+    box-shadow: var(--shadow-md);
+}
+
+.stat-icon {
+    font-size: 2.5rem;
+    opacity: 0.8;
+}
+
+/* Form Styling */
+.form-control, .form-select {
+    background-color: var(--card-bg);
+    color: var(--text-color);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 0.6rem 0.9rem;
+}
+
+.form-control:focus, .form-select:focus {
+    background-color: var(--card-bg);
+    color: var(--text-color);
+    border-color: var(--primary-red);
+    box-shadow: 0 0 0 0.25rem var(--accent-red);
+}
+
+/* Custom Table design */
+.table {
+    color: var(--text-color);
+    border-color: var(--border-color);
+}
+
+.table-hover tbody tr:hover {
+    background-color: rgba(0, 0, 0, 0.02);
+}
+
+[data-theme="dark"] .table-hover tbody tr:hover {
+    background-color: rgba(255, 255, 255, 0.02);
+}
+
+/* Theme switch custom controls */
+.theme-switch-wrapper {
+    display: flex;
+    align-items: center;
+}
+
+.theme-switch {
+    display: inline-block;
+    height: 24px;
+    position: relative;
+    width: 48px;
+}
+
+.theme-switch input {
+    display: none;
+}
+
+.slider {
+    background-color: #ccc;
+    bottom: 0;
+    cursor: pointer;
+    left: 0;
+    position: absolute;
+    right: 0;
+    top: 0;
+    transition: .4s;
+    border-radius: 34px;
+}
+
+.slider:before {
+    background-color: white;
+    bottom: 3px;
+    content: "";
+    height: 18px;
+    left: 3px;
+    position: absolute;
+    transition: .4s;
+    width: 18px;
+    border-radius: 50%;
+}
+
+input:checked + .slider {
+    background-color: var(--primary-red);
+}
+
+input:checked + .slider:before {
+    transform: translateX(24px);
+}
+
+/* Responsive sidebar */
+.sidebar-wrapper {
+    background-color: var(--card-bg);
+    border-right: 1px solid var(--border-color);
+    min-height: calc(100vh - 56px);
+}
+
+/* Search panel */
+.search-banner {
+    background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url('/static/images/heart_bg.jpg') center/cover;
+    background-color: #B71C1C;
+    border-radius: 16px;
+    color: white;
+}
+
+/* Loading animations */
+.glow-effect {
+    animation: glow-animation 1.5s infinite ease-in-out;
+}
+
+@keyframes glow-animation {
+    0% { transform: scale(1); opacity: 0.95; }
+    50% { transform: scale(1.05); opacity: 1; }
+    100% { transform: scale(1); opacity: 0.95; }
+}
+
+/* Buttons */
+.btn-red {
+    background-color: var(--primary-red);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-weight: 500;
+    transition: background-color 0.2s;
+}
+
+.btn-red:hover {
+    background-color: var(--hover-red);
+    color: white;
+}
+
+.btn-whatsapp {
+    background-color: #25D366;
+    color: white;
+    font-weight: 500;
+    border: none;
+}
+.btn-whatsapp:hover {
+    background-color: #128C7E;
+    color: white;
+}
+
+.btn-call {
+    background-color: #1976D2;
+    color: white;
+    font-weight: 500;
+    border: none;
+}
+.btn-call:hover {
+    background-color: #0D47A1;
+    color: white;
+}
+
+/* Empty UI placeholder state styling */
+.empty-state-ui {
+    padding: 3rem 1.5rem;
+    text-align: center;
+}
+
+.empty-state-icon {
+    font-size: 4rem;
+    color: var(--text-muted);
+    margin-bottom: 1rem;
+}
+
+/* Footer style */
+footer {
+    background-color: #1E1E1E;
+    color: #B0BEC5;
+    font-size: 0.9rem;
+    padding: 1.5rem 0;
+    margin-top: auto;
+}

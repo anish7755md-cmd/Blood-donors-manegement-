@@ -1,0 +1,237 @@
+{% extends "layout.html" %}
+
+{% block title %}Search Blood Donors Karnataka - Blood Donor System{% endblock %}
+
+{% block content %}
+<div class="row g-4">
+    
+    <!-- 1. Left Hand Side Sidebar (Stats, Recent Searches, Emergency ticker) -->
+    <div class="col-lg-4 col-md-5">
+        <!-- Metric Cards -->
+        <div class="card border-0 shadow-sm p-4 text-white mb-4 position-relative overflow-hidden" 
+             style="background: linear-gradient(135deg, #FF5252 0%, #C62828 100%);">
+            <div class="d-flex align-items-center justify-content-between">
+                <div>
+                    <h6 class="text-uppercase mb-1" style="font-size:0.8rem; font-weight:700; letter-spacing:1px; opacity:0.85;">Total Donors</h6>
+                    <h2 class="display-5 fw-bold mb-0">{{ total_donors }}</h2>
+                </div>
+                <div class="display-3 opacity-25">🩸</div>
+            </div>
+            <p class="mb-0 mt-3 small opacity-90"><i class="bi bi-shield-fill-check"></i> Registered across Karnataka State</p>
+        </div>
+
+        <div class="card border-0 shadow-sm p-4 text-white mb-4 position-relative overflow-hidden" 
+             style="background: linear-gradient(135deg, #66BB6A 0%, #2E7D32 100%);">
+            <div class="d-flex align-items-center justify-content-between">
+                <div>
+                    <h6 class="text-uppercase mb-1" style="font-size:0.8rem; font-weight:700; letter-spacing:1px; opacity:0.85;">Available Now</h6>
+                    <h2 class="display-5 fw-bold mb-0">{{ available_donors }}</h2>
+                </div>
+                <div class="display-3 opacity-25">💚</div>
+            </div>
+            <p class="mb-0 mt-3 small opacity-90"><i class="bi bi-clock-history"></i> Ready for active donation requests</p>
+        </div>
+
+        <!-- Local Storage Search History Widget -->
+        <div class="card mb-4 shadow-sm border-0">
+            <div class="card-header bg-transparent border-0 pt-3 pb-0 d-flex justify-content-between align-items-center">
+                <h6 class="mb-0 fw-bold text-muted"><i class="bi bi-search me-1"></i> Recent Searches</h6>
+                <button onclick="clearSearchHistory()" class="btn btn-link btn-sm text-danger text-decoration-none p-0" style="font-size: 0.8rem;">
+                    Clear All
+                </button>
+            </div>
+            <div class="card-body px-2 py-2">
+                <ul class="list-group list-group-flush" id="search_history_items">
+                    <!-- Javascript populates this -->
+                </ul>
+            </div>
+        </div>
+
+        <!-- Emergency Urgent Board Panel -->
+        <div class="card mb-4 border-0 shadow-sm bg-light-subtle">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center border-bottom pb-2 mb-3">
+                    <h6 class="mb-0 fw-bold text-danger"><i class="bi bi-exclamation-octagon-fill text-danger glow-effect me-1"></i> Active Emergencies</h6>
+                    <a href="{{ url_for('emergency') }}" class="btn btn-outline-danger btn-sm rounded-pill px-3 py-1 fw-medium" style="font-size:0.75rem;">Post Request</a>
+                </div>
+                {% if recent_requests %}
+                    {% for req in recent_requests %}
+                        <div class="p-3 mb-2 rounded border bg-card position-relative shadow-sm" style="background-color: var(--card-bg);">
+                            <div class="d-flex justify-content-between align-items-start">
+                                <span class="badge bg-danger rounded-pill px-2 mb-1" style="font-size:0.7rem;">{{ req.blood_group }} Required</span>
+                                <span class="badge text-white rounded-pill {% if req.urgency_level == 'Critical' %}bg-dark{% else %}bg-secondary{% endif %}" style="font-size:0.65rem;">{{ req.urgency_level }}</span>
+                            </div>
+                            <h6 class="mb-1 text-cardfw-bold text-dark-emphasis" style="font-size:0.85rem;">{{ req.patient_name }}</h6>
+                            <p class="text-muted mb-2 text-truncate" style="font-size:0.75rem;"><i class="bi bi-hospital me-1"></i> {{ req.hospital_name }}, {{ req.location }}</p>
+                            <a href="tel:{{ req.contact_phone }}" class="btn btn-sm btn-outline-danger w-100 py-1" style="font-size:0.75rem;">
+                                <i class="bi bi-telephone"></i> Call Coordinator
+                            </a>
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    <div class="text-muted text-center py-4">
+                        <i class="bi bi-shield-check text-success fs-2"></i>
+                        <p class="small mb-0 mt-1">No pending emergency critical requests reported recently.</p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    
+    <!-- 2. Right Hand Side Main Donor Search Block Panel -->
+    <div class="col-lg-8 col-md-7">
+        
+        <!-- Search filter Container -->
+        <div class="card border-0 shadow-md mb-4 search-banner p-4">
+            <h3 class="fw-bold mb-1 text-white">Search Karnataka Blood Donors</h3>
+            <p class="text-white-50 mb-4" style="font-size:0.95rem;">Filter quickly by required Blood Groups, Districts, and Cities to find critical assistance.</p>
+            
+            <form method="GET" action="{{ url_for('index') }}" id="searchForm" class="row g-2">
+                <div class="col-6 col-md-3">
+                    <select class="form-select border-0 shadow-sm" id="blood_group" name="blood_group">
+                        <option value="">Blood Group</option>
+                        {% for bg in blood_groups %}
+                            <option value="{{ bg }}" {% if selected_bg == bg %}selected{% endif %}>{{ bg }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-6 col-md-4">
+                    <select class="form-select border-0 shadow-sm" id="district" name="district">
+                        <option value="">Karnataka District</option>
+                        {% for d in districts %}
+                            <option value="{{ d }}" {% if selected_dist == d %}selected{% endif %}>{{ d }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-7 col-md-3">
+                    <input type="text" class="form-control border-0 shadow-sm" id="city" name="city" placeholder="City / Area" value="{{ selected_city }}">
+                </div>
+                <div class="col-5 col-md-2">
+                    <button type="submit" class="btn btn-light w-100 fw-semibold text-danger shadow" style="height: 41px;">
+                        <i class="bi bi-funnel-fill"></i> Filter
+                    </button>
+                </div>
+                
+                <div class="col-12 mt-3 d-flex align-items-center justify-content-between flex-wrap gap-2 text-white">
+                    <div class="form-check form-switch p-0 d-flex align-items-center gap-2">
+                        <input class="form-check-input ms-0" type="checkbox" role="switch" id="availabilityCheck" name="availability" value="Available" {% if selected_avail == 'Available' %}checked{% endif %}>
+                        <label class="form-check-label text-white-50 small" for="availabilityCheck">Show only available donors</label>
+                    </div>
+                    {% if selected_bg or selected_dist or selected_city or selected_avail %}
+                        <a href="{{ url_for('index') }}" class="btn btn-sm btn-outline-light border-0 text-white-50 text-decoration-none">
+                            <i class="bi bi-x-circle"></i> Clear Filters
+                        </a>
+                    {% endif %}
+                </div>
+            </form>
+        </div>
+
+        <!-- Filter Count & Global Download Trigger API -->
+        <div class="d-flex align-items-center justify-content-between mb-3 flex-wrap gap-2 px-1">
+            <h5 class="fw-bold mb-0" style="font-size:1.1rem; color: var(--text-color);">
+                Search Results 
+                <span class="badge rounded-pill bg-danger-subtle text-danger ms-2" style="font-size:0.8rem;">Found {{ count }} Matches</span>
+            </h5>
+            {% if count > 0 %}
+                <button onclick="generateDonorPDF()" class="btn btn-outline-danger btn-sm fw-bold rounded-2">
+                    <i class="bi bi-file-earmark-pdf-fill me-1"></i> Download PDF Report
+                </button>
+            {% endif %}
+        </div>
+
+        <!-- Donor Results Listing -->
+        {% if count > 0 %}
+            <div class="row g-3">
+                {% for d in donors %}
+                    <!-- PDF targeted tracking elements -->
+                    <div class="col-12 pdf-target-row" 
+                         data-name="{{ d.name }}" 
+                         data-bg="{{ d.blood_group }}" 
+                         data-district="{{ d.district }}" 
+                         data-city="{{ d.city }}" 
+                         data-phone="{{ d.phone }}" 
+                         data-avail="{{ d.availability }}">
+                        
+                        <div class="card p-3 border-0 shadow-sm align-items-center justify-content-between h-100">
+                            <div class="card-body p-0 w-100">
+                                <div class="row align-items-center g-3">
+                                    
+                                    <!-- Blood circle badge UI element -->
+                                    <div class="col-auto">
+                                        <div class="rounded-circle d-flex align-items-center justify-content-center border border-danger-subtle text-danger bg-danger-subtle shadow-sm font-monospace" 
+                                             style="width: 54px; height: 54px; font-size:1.4rem; font-weight: 800;">
+                                            {{ d.blood_group }}
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Central Donor Profile Details -->
+                                    <div class="col">
+                                        <div class="d-flex align-items-center gap-2 mb-1 flex-wrap">
+                                            <h5 class="card-title fw-bold text-card mb-0" style="font-size:1.15rem; color: var(--text-color);">{{ d.name }}</h5>
+                                            <span class="badge rounded-pill {% if d.availability == 'Available' %}badge-available{% else %}badge-unavailable{% endif %}" style="font-size:0.7rem;">
+                                                <i class="bi {% if d.availability == 'Available' %}bi-check-circle-fill{% else %}bi-slash-circle-fill{% endif %}"></i> {{ d.availability }}
+                                            </span>
+                                        </div>
+                                        
+                                        <p class="mb-1 text-muted small">
+                                            <i class="bi bi-geo-alt-fill text-danger"></i> <strong>{{ d.city }}</strong>, {{ d.district }}
+                                        </p>
+                                        
+                                        <div class="d-flex align-items-center gap-3 text-muted small">
+                                            <span><strong>Age:</strong> {{ d.age }} Yrs</span>
+                                            <span>&bull;</span>
+                                            <span><strong>Gender:</strong> {{ d.gender }}</span>
+                                            {% if d.last_donation_date %}
+                                                <span>&bull;</span>
+                                                <span class="text-truncate"><strong>Last Donated:</strong> {{ d.last_donation_date }}</span>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Quick Call/WhatsApp Integration Elements -->
+                                    <div class="col-lg-4 col-md-12 text-lg-end d-flex gap-2 justify-content-start justify-content-lg-end">
+                                        {% if d.availability == 'Available' %}
+                                            <!-- Pre-filled Emergency Whastapp Template format -->
+                                            <a href="https://wa.me/91{{ d.phone }}?text=Hello%20{{ d.name }},%20this%20is%20an%20URGENT%20emergency%20blood%20request%20for%20blood%20group%20{{ d.blood_group }}%20under%20the%20Karnataka%20Blood%20Donor%20Management%20System.%20Please%20contact%20us%20immediately."
+                                               target="_blank" class="btn btn-whatsapp btn-sm px-3 py-2 btn-flex" title="WhatsApp emergency query text">
+                                                <i class="bi bi-whatsapp"></i> WhatsApp
+                                            </a>
+                                            <!-- Standard click-to-call link -->
+                                            <a href="tel:{{ d.phone }}" class="btn btn-call btn-sm px-3 py-2 btn-flex">
+                                                <i class="bi bi-telephone-outbound"></i> Call
+                                            </a>
+                                        {% else %}
+                                            <button disabled class="btn btn-secondary btn-sm opacity-50 w-100 py-2">
+                                                <i class="bi bi-calendar2-x-fill"></i> Unavailable
+                                            </button>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <!-- Animated Custom Empty State UI Block component -->
+            <div class="card p-5 border-0 shadow-sm align-items-center justify-content-center text-center empty-state-ui">
+                <div class="empty-state-icon">
+                    <i class="bi bi-droplet-half text-danger glow-effect d-inline-block"></i>
+                </div>
+                <h4 class="fw-bold mb-2">No Matching Donors Found</h4>
+                <p class="text-muted max-width-md mx-auto" style="font-size:0.95rem;">
+                    No registered donor fits the specific filters: 
+                    {% if selected_bg %}<strong>{{ selected_bg }}</strong> blood group{% endif %} 
+                    {% if selected_dist %} in <strong>{{ selected_dist }}</strong>{% endif %}. 
+                    Please try reducing filters, extending locations, or post an ongoing Emergency request.
+                </p>
+                <div class="mt-3">
+                    <a href="{{ url_for('index') }}" class="btn btn-red px-4 text-white">
+                        <i class="bi bi-arrow-clockwise"></i> Reset Filtration
+                    </a>
+                </div>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

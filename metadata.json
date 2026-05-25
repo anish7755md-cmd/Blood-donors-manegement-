@@ -1,0 +1,6 @@
+{
+  "name": "Blood Donors Management",
+  "description": "Full-stack Blood Donor Management system for searching, registering, and managing emergency blood requests in Karnataka.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

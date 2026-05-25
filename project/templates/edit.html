@@ -1,0 +1,112 @@
+{% extends "layout.html" %}
+
+{% block title %}Update Registry: {{ donor.name }} - Blood Donor System{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-8 col-md-10 col-12">
+        <div class="card p-4 shadow-lg border-0 position-relative overflow-hidden">
+            
+            <!-- Red emphasis accent line -->
+            <div style="position: absolute; top:0; left:0; width:100%; height: 5px; background-color: var(--primary-red);"></div>
+            
+            <div class="d-flex justify-content-between align-items-center border-bottom pb-2 mb-4">
+                <h4 class="fw-bold mb-0 text-danger"><i class="bi bi-pencil-square"></i> Modify Donor Registry Record</h4>
+                <a href="{{ url_for('dashboard') }}" class="btn btn-outline-secondary btn-sm">
+                    <i class="bi bi-arrow-left"></i> Cancel & Back
+                </a>
+            </div>
+
+            <form method="POST" action="{{ url_for('edit', id=donor.id) }}" class="row g-3">
+                
+                <!-- Full Name -->
+                <div class="col-md-6 col-12">
+                    <label for="name" class="form-label fw-semibold" style="font-size:0.85rem;">Donor's Full Name <span class="text-danger">*</span></label>
+                    <input type="text" class="form-control" id="name" name="name" value="{{ donor.name }}" required>
+                </div>
+                
+                <!-- Email Address -->
+                <div class="col-md-6 col-12">
+                    <label for="email" class="form-label fw-semibold" style="font-size:0.85rem;">Email Address <span class="text-danger">*</span></label>
+                    <input type="email" class="form-control" id="email" name="email" value="{{ donor.email }}" required>
+                </div>
+
+                <!-- Phone Number -->
+                <div class="col-md-6 col-12">
+                    <label for="phone" class="form-label fw-semibold" style="font-size:0.85rem;">Phone / Whatsapp Number <span class="text-danger">*</span></label>
+                    <input type="tel" class="form-control" id="phone" name="phone" value="{{ donor.phone }}" required pattern="[0-9]{10}">
+                    <div class="form-text small" style="font-size:0.75rem;">10 digits without leading +91 or 0 (used for calling/WhatsApp).</div>
+                </div>
+
+                <!-- Gender -->
+                <div class="col-md-3 col-6">
+                    <label for="gender" class="form-label fw-semibold" style="font-size:0.85rem;">Gender <span class="text-danger">*</span></label>
+                    <select class="form-select" id="gender" name="gender" required>
+                        <option value="Male" {% if donor.gender == 'Male' %}selected{% endif %}>Male</option>
+                        <option value="Female" {% if donor.gender == 'Female' %}selected{% endif %}>Female</option>
+                        <option value="Other" {% if donor.gender == 'Other' %}selected{% endif %}>Other</option>
+                    </select>
+                </div>
+
+                <!-- Blood Group -->
+                <div class="col-md-3 col-6">
+                    <label for="blood_group" class="form-label fw-semibold" style="font-size:0.85rem;">Blood Group <span class="text-danger">*</span></label>
+                    <select class="form-select" id="blood_group" name="blood_group" required>
+                        {% for bg in blood_groups %}
+                            <option value="{{ bg }}" {% if donor.blood_group == bg %}selected{% endif %}>{{ bg }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <!-- Karnataka District dropdown -->
+                <div class="col-md-6 col-12">
+                    <label for="district" class="form-label fw-semibold" style="font-size:0.85rem;">Karnataka District <span class="text-danger">*</span></label>
+                    <select class="form-select" id="district" name="district" required>
+                        {% for d in districts %}
+                            <option value="{{ d }}" {% if donor.district == d %}selected{% endif %}>{{ d }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <!-- City / Local Area -->
+                <div class="col-md-6 col-12">
+                    <label for="city" class="form-label fw-semibold" style="font-size:0.85rem;">City / Town / Area <span class="text-danger">*</span></label>
+                    <input type="text" class="form-control" id="city" name="city" value="{{ donor.city }}" required>
+                </div>
+
+                <!-- Date of Birth -->
+                <div class="col-md-6 col-12">
+                    <label for="dob" class="form-label fw-semibold" style="font-size:0.85rem;">Date of Birth <span class="text-danger">*</span></label>
+                    <input type="date" class="form-control" id="dob" name="dob" value="{{ donor.dob }}" required>
+                </div>
+
+                <!-- Auto calculated Age -->
+                <div class="col-md-6 col-12">
+                    <label for="calculated_age" class="form-label fw-semibold" style="font-size:0.85rem;">Auto-Calculated Age</label>
+                    <input type="text" class="form-control bg-light" id="calculated_age" value="{{ donor.age }} Years" placeholder="Awaiting DOB..." readonly>
+                    <div class="form-text small" id="age_feedback" style="font-size:0.75rem;">Determined automatically. Standard donation age requires 18-65.</div>
+                </div>
+
+                <!-- Last Donation Date -->
+                <div class="col-md-6 col-12">
+                    <label for="last_donation_date" class="form-label fw-semibold" style="font-size:0.85rem;">Last Donation Date <span class="text-secondary">(Optional)</span></label>
+                    <input type="date" class="form-control" id="last_donation_date" name="last_donation_date" value="{{ donor.last_donation_date }}">
+                </div>
+
+                <!-- Availability Status -->
+                <div class="col-md-6 col-12">
+                    <label for="availability" class="form-label fw-semibold" style="font-size:0.85rem;">Availability Status <span class="text-danger">*</span></label>
+                    <select class="form-select" id="availability" name="availability" required>
+                        <option value="Available" {% if donor.availability == 'Available' %}selected{% endif %}>Available (Visible on public search)</option>
+                        <option value="Unavailable" {% if donor.availability == 'Unavailable' %}selected{% endif %}>Unavailable (Ineligible / Rest Period / Busy)</option>
+                    </select>
+                </div>
+
+                <div class="col-12 mt-4">
+                    <button type="submit" class="btn btn-red w-100 py-2.5 fw-semibold fs-5 text-white shadow"><i class="bi bi-save2-fill"></i> Save Updates & Synchronize</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
